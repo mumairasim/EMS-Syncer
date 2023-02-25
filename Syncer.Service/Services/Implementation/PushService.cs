@@ -22,7 +22,7 @@ namespace Syncer.Service.Services.Implementation
 
         public void PushPending<T>(string url) where T : DomainBaseEnitity
         {
-            var pendingList = _repository.GetQuery<T>().Where(x => x.ApprovalStatus == RequestStatus.Pending && x.IsDeleted == false).ToList();
+            var pendingList = _repository.GetQuery<T>().Where(x => x.ApprovalStatus == RequestStatus.Pending && x.IsSent == false && x.IsDeleted == false).ToList();
             SendList(pendingList, url);
 
         }
@@ -45,7 +45,7 @@ namespace Syncer.Service.Services.Implementation
         }
         private void UpdateDatabase<T>() where T : DomainBaseEnitity
         {
-            _repository.GetQuery<T>().Where(x => x.ApprovalStatus == RequestStatus.Pending && x.IsDeleted == false).ToList().ForEach(x => x.IsSent = true);
+            _repository.GetQuery<T>().Where(x => x.ApprovalStatus == RequestStatus.Pending && x.IsSent == false && x.IsDeleted == false).ToList().ForEach(x => x.IsSent = true);
             _repository.SaveChanges();
         }
     }

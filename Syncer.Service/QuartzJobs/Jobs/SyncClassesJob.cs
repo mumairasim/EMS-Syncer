@@ -24,7 +24,6 @@ namespace Syncer.Service.QuartzJobs.Jobs
         {
             _logger.LogWarning("Sync Classes Job Started!---------------------------------\n\n");
             _pushService.PushPending<Class>("http://localhost:44358/api/v1/Class/BulkCreate");
-            //_classService.PushPending();
             _logger.LogInformation("sync classes Job Executed!-------------------------------------\n\n");
             return Task.CompletedTask;
         }

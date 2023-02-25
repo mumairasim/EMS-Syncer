@@ -40,9 +40,8 @@ namespace Syncer.Service
             services.AddDbContext<SMSContext>(options => options.UseSqlServer(smsConnectionString), ServiceLifetime.Singleton);
 
             services.AddSingleton<IRepository, Repository>();
-            services.AddSingleton<IClassService, ClassService>();
+            services.AddSingleton<IPushService, PushService>();
             services.AddHttpContextAccessor();
-            //services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
 
             services.AddSingleton<IJobFactory, SingletonJobFactory>();

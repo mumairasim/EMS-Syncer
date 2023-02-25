@@ -10,30 +10,28 @@ using System.Net.Http;
 
 namespace Syncer.Service.Services.Implementation
 {
-    public class ClassService : IClassService
+    public class PushService : IPushService
     {
 
         private readonly IRepository _repository;
 
-        public ClassService(IRepository repository)
+        public PushService(IRepository repository)
         {
             _repository = repository;
         }
 
-        public void PushPending()
+        public void PushPending<T>(string url) where T : DomainBaseEnitity
         {
-            var pendingList = _repository.GetQuery<Class>().Where(x => x.ApprovalStatus == RequestStatus.Pending && x.IsDeleted == false).ToList();
-            SendList(pendingList);
+            var pendingList = _repository.GetQuery<T>().Where(x => x.ApprovalStatus == RequestStatus.Pending && x.IsDeleted == false).ToList();
+            SendList(pendingList, url);
 
         }
-        private void SendList(List<Class> list)
+        private void SendList<T>(List<T> list, string url) where T : DomainBaseEnitity
         {
             using (var httpClient = new HttpClient())
             {
                 var json = JsonConvert.SerializeObject(list);
                 var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-
-                var url = "http://localhost:44358/api/v1/Class/BulkCreate";
                 // Make an HTTP GET request to the specified URL
                 var responseTask = httpClient.PostAsync(url, content);
 
@@ -42,12 +40,12 @@ namespace Syncer.Service.Services.Implementation
                 var responseContent = responseContentTask.Result;
                 var finalResponse = JsonConvert.DeserializeObject<GenericApiResponse>(responseContent);
                 if (finalResponse != null && finalResponse.StatusCode.Equals("200", System.StringComparison.CurrentCultureIgnoreCase))
-                    UpdateDatabase();
+                    UpdateDatabase<T>();
             }
         }
-        private void UpdateDatabase()
+        private void UpdateDatabase<T>() where T : DomainBaseEnitity
         {
-            _repository.GetQuery<Class>().Where(x => x.ApprovalStatus == RequestStatus.Pending && x.IsDeleted == false).ToList().ForEach(x => x.IsSent = true);
+            _repository.GetQuery<T>().Where(x => x.ApprovalStatus == RequestStatus.Pending && x.IsDeleted == false).ToList().ForEach(x => x.IsSent = true);
             _repository.SaveChanges();
         }
     }

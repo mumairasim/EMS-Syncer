@@ -7,3 +7,7 @@
 /.vs
 /Syncer.Service/.vs/Syncer.Service/v16
 /Syncer.Service/obj
+/Syncer.Common/obj
+/Syncer.Data/bin/Debug/netcoreapp3.1
+/Syncer.Data/obj
+/Syncer.Service/bin/Debug/netcoreapp3.1

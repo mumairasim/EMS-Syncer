@@ -9,6 +9,7 @@ namespace Syncer.Data.DatabaseContext
         {
         }
         public DbSet<Class> Classes { get; set; }
+        public virtual DbSet<Course> Courses { get; set; }
         public virtual DbSet<School> Schools { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

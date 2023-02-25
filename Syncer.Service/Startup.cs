@@ -37,15 +37,15 @@ namespace Syncer.Service
                 .AddJsonFile("appsettings.json", optional: false);
             IConfiguration config = builder.Build();
             var smsConnectionString = config.GetConnectionString("SMSDB");
-            services.AddDbContext<SMSContext>(options => options.UseSqlServer(smsConnectionString), ServiceLifetime.Singleton);
+            services.AddDbContext<SMSContext>(options => options.UseSqlServer(smsConnectionString), ServiceLifetime.Transient);
 
-            services.AddSingleton<IRepository, Repository>();
-            services.AddSingleton<IPushService, PushService>();
+            services.AddTransient<IRepository, Repository>();
+            services.AddTransient<IPushService, PushService>();
             services.AddHttpContextAccessor();
 
 
-            services.AddSingleton<IJobFactory, SingletonJobFactory>();
-            services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
+            services.AddTransient<IJobFactory, SingletonJobFactory>();
+            services.AddTransient<ISchedulerFactory, StdSchedulerFactory>();
             services.AddHostedService<QuartzHostedService>();
             var configuration = config
                 .GetSection("Quartz")
@@ -55,9 +55,15 @@ namespace Syncer.Service
 
             #region Jobs
 
-            services.AddSingleton<SyncClassesJob>();
+            services.AddTransient<SyncClassesJob>();
             services.AddSingleton(new JobSchedule(
                 jobType: typeof(SyncClassesJob),
+                cronExpression: configuration.SyncClassesJobTimeInterval));
+
+
+            services.AddTransient<SyncCoursesJob>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(SyncCoursesJob),
                 cronExpression: configuration.SyncClassesJobTimeInterval));
 
             #endregion

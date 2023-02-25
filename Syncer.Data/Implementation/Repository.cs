@@ -9,7 +9,7 @@ namespace Syncer.Data.Implementation
 {
     public class Repository : IRepository
     {
-        public static SMSContext _smsContext;
+        public readonly SMSContext _smsContext;
 
         public Repository(SMSContext smsContext)
         {

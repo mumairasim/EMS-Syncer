@@ -50,6 +50,8 @@ namespace Syncer.Service
             var configuration = config
                 .GetSection("Quartz")
                 .Get<QuartzConfiguration>();
+            services.Configure<HeadOfficeConfig>(config.GetSection(nameof(HeadOfficeConfig)));
+
             services.AddSingleton(configuration);
 
 
@@ -64,7 +66,17 @@ namespace Syncer.Service
             services.AddTransient<SyncCoursesJob>();
             services.AddSingleton(new JobSchedule(
                 jobType: typeof(SyncCoursesJob),
-                cronExpression: configuration.SyncClassesJobTimeInterval));
+                cronExpression: configuration.SyncCoursesJobTimeInterval));
+
+            services.AddTransient<SyncLessonPlansJob>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(SyncLessonPlansJob),
+                cronExpression: configuration.SyncLessonPlanJobTimeInterval));
+
+            services.AddTransient<SyncStudentsJob>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(SyncStudentsJob),
+                cronExpression: configuration.SyncStudentsJobTimeInterval));
 
             #endregion
 
